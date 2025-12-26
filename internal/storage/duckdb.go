@@ -332,7 +332,7 @@ func (d *DuckDB) compressAndMoveTier(table string, cutoff time.Time) {
 
 // compressHotSpans fetches and compresses HOT spans
 func (d *DuckDB) compressHotSpans(timeStart, timeEnd time.Time) (*compression.CompressionStats, error) {
-	query := `SELECT timestamp, trace_id, span_id, parent_span_id, service, operation, duration_us, status, tags
+	query := `SELECT timestamp, trace_id, span_id, parent_span_id, service, operation, duration_us, status, CAST(tags AS VARCHAR)
 			  FROM spans WHERE tier = 'hot' AND timestamp >= ? AND timestamp < ?`
 
 	rows, err := d.db.Query(query, timeStart, timeEnd)
@@ -412,7 +412,7 @@ func (d *DuckDB) compressHotSpans(timeStart, timeEnd time.Time) (*compression.Co
 
 // compressHotLogs fetches and compresses HOT logs
 func (d *DuckDB) compressHotLogs(timeStart, timeEnd time.Time) (*compression.CompressionStats, error) {
-	query := `SELECT timestamp, service, level, message, tags
+	query := `SELECT timestamp, service, level, message, CAST(tags AS VARCHAR)
 			  FROM logs WHERE tier = 'hot' AND timestamp >= ? AND timestamp < ?`
 
 	rows, err := d.db.Query(query, timeStart, timeEnd)
@@ -481,7 +481,7 @@ func (d *DuckDB) compressHotLogs(timeStart, timeEnd time.Time) (*compression.Com
 
 // compressHotMetrics fetches and compresses HOT metrics
 func (d *DuckDB) compressHotMetrics(timeStart, timeEnd time.Time) (*compression.CompressionStats, error) {
-	query := `SELECT timestamp, service, name, value, tags
+	query := `SELECT timestamp, service, name, value, CAST(tags AS VARCHAR)
 			  FROM metrics WHERE tier = 'hot' AND timestamp >= ? AND timestamp < ?`
 
 	rows, err := d.db.Query(query, timeStart, timeEnd)
