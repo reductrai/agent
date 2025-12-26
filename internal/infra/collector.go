@@ -12,8 +12,8 @@ type Collector struct {
 	timeout time.Duration
 
 	// Detected infrastructure
-	hasKubectl  bool
-	hasDocker   bool
+	hasKubectl   bool
+	hasDocker    bool
 	hasSystemctl bool
 }
 

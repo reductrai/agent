@@ -1130,11 +1130,11 @@ func (d *DuckDB) GetCompressionStats() map[string]interface{} {
 		totalCompressed += compressed
 
 		byType[dataType] = map[string]interface{}{
-			"blocks":           blocks,
-			"original_bytes":   original,
-			"compressed_bytes": compressed,
+			"blocks":            blocks,
+			"original_bytes":    original,
+			"compressed_bytes":  compressed,
 			"compression_ratio": ratio,
-			"savings_percent":  (1.0 - float64(compressed)/float64(original)) * 100,
+			"savings_percent":   (1.0 - float64(compressed)/float64(original)) * 100,
 		}
 	}
 

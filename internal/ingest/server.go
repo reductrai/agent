@@ -18,14 +18,14 @@ import (
 
 // Default buffer and batch sizes
 const (
-	DefaultBufferSize    = 100000 // 100K items per channel
-	DefaultBatchSize     = 1000   // Insert 1000 at a time
-	MinBatchSize         = 100    // Minimum batch size
-	MaxBatchSize         = 10000  // Maximum batch size
-	FlushInterval        = 100 * time.Millisecond
-	ScaleCheckInterval   = 1 * time.Second
-	HighPressureThreshold = 0.7  // 70% buffer full = scale up
-	LowPressureThreshold  = 0.2  // 20% buffer full = scale down
+	DefaultBufferSize     = 100000 // 100K items per channel
+	DefaultBatchSize      = 1000   // Insert 1000 at a time
+	MinBatchSize          = 100    // Minimum batch size
+	MaxBatchSize          = 10000  // Maximum batch size
+	FlushInterval         = 100 * time.Millisecond
+	ScaleCheckInterval    = 1 * time.Second
+	HighPressureThreshold = 0.7 // 70% buffer full = scale up
+	LowPressureThreshold  = 0.2 // 20% buffer full = scale down
 )
 
 // Server handles telemetry ingestion with high-throughput buffering
@@ -124,102 +124,102 @@ func (s *Server) Start(ctx context.Context) error {
 
 	// Format-specific endpoints
 	// === OpenTelemetry ===
-	mux.HandleFunc("/v1/traces", s.handleOTLPTraces)          // OTLP traces
-	mux.HandleFunc("/v1/logs", s.handleOTLPLogs)              // OTLP logs
-	mux.HandleFunc("/v1/metrics", s.handleOTLPMetrics)        // OTLP metrics
+	mux.HandleFunc("/v1/traces", s.handleOTLPTraces)   // OTLP traces
+	mux.HandleFunc("/v1/logs", s.handleOTLPLogs)       // OTLP logs
+	mux.HandleFunc("/v1/metrics", s.handleOTLPMetrics) // OTLP metrics
 
 	// === Prometheus ===
-	mux.HandleFunc("/api/v1/prom/write", s.handlePrometheus)  // Prometheus remote write
-	mux.HandleFunc("/api/v1/write", s.handlePrometheus)       // Prometheus remote write (alt)
+	mux.HandleFunc("/api/v1/prom/write", s.handlePrometheus) // Prometheus remote write
+	mux.HandleFunc("/api/v1/write", s.handlePrometheus)      // Prometheus remote write (alt)
 	mux.HandleFunc("/prometheus/api/v1/write", s.handlePrometheus)
 
 	// === Datadog ===
-	mux.HandleFunc("/api/v2/series", s.handleDatadog)         // Datadog metrics
-	mux.HandleFunc("/api/v1/series", s.handleDatadog)         // Datadog metrics (v1)
-	mux.HandleFunc("/api/v1/check_run", s.handleDatadog)      // Datadog service checks
-	mux.HandleFunc("/api/v2/logs", s.handleDatadogLogs)       // Datadog logs v2
-	mux.HandleFunc("/api/v1/logs", s.handleDatadogLogs)       // Datadog logs v1
-	mux.HandleFunc("/v1/input", s.handleDatadogLogs)          // Datadog logs (alt)
+	mux.HandleFunc("/api/v2/series", s.handleDatadog)    // Datadog metrics
+	mux.HandleFunc("/api/v1/series", s.handleDatadog)    // Datadog metrics (v1)
+	mux.HandleFunc("/api/v1/check_run", s.handleDatadog) // Datadog service checks
+	mux.HandleFunc("/api/v2/logs", s.handleDatadogLogs)  // Datadog logs v2
+	mux.HandleFunc("/api/v1/logs", s.handleDatadogLogs)  // Datadog logs v1
+	mux.HandleFunc("/v1/input", s.handleDatadogLogs)     // Datadog logs (alt)
 
 	// === Jaeger ===
-	mux.HandleFunc("/api/traces", s.handleJaeger)             // Jaeger traces
-	mux.HandleFunc("/jaeger/api/traces", s.handleJaeger)      // Jaeger (prefixed)
+	mux.HandleFunc("/api/traces", s.handleJaeger)        // Jaeger traces
+	mux.HandleFunc("/jaeger/api/traces", s.handleJaeger) // Jaeger (prefixed)
 
 	// === Zipkin ===
-	mux.HandleFunc("/api/v2/spans", s.handleZipkin)           // Zipkin v2 traces
-	mux.HandleFunc("/api/v1/spans", s.handleZipkin)           // Zipkin v1 traces
-	mux.HandleFunc("/zipkin/api/v2/spans", s.handleZipkin)    // Zipkin (prefixed)
+	mux.HandleFunc("/api/v2/spans", s.handleZipkin)        // Zipkin v2 traces
+	mux.HandleFunc("/api/v1/spans", s.handleZipkin)        // Zipkin v1 traces
+	mux.HandleFunc("/zipkin/api/v2/spans", s.handleZipkin) // Zipkin (prefixed)
 
 	// === Grafana/Loki ===
-	mux.HandleFunc("/loki/api/v1/push", s.handleLoki)         // Loki logs
+	mux.HandleFunc("/loki/api/v1/push", s.handleLoki) // Loki logs
 
 	// === Splunk ===
-	mux.HandleFunc("/services/collector/event", s.handleSplunkHEC)  // Splunk HEC
-	mux.HandleFunc("/services/collector", s.handleSplunkHEC)        // Splunk HEC (alt)
+	mux.HandleFunc("/services/collector/event", s.handleSplunkHEC) // Splunk HEC
+	mux.HandleFunc("/services/collector", s.handleSplunkHEC)       // Splunk HEC (alt)
 
 	// === Elasticsearch ===
-	mux.HandleFunc("/_bulk", s.handleElasticsearch)                 // Elasticsearch bulk
-	mux.HandleFunc("/elasticsearch/_bulk", s.handleElasticsearch)   // Elasticsearch (prefixed)
+	mux.HandleFunc("/_bulk", s.handleElasticsearch)               // Elasticsearch bulk
+	mux.HandleFunc("/elasticsearch/_bulk", s.handleElasticsearch) // Elasticsearch (prefixed)
 
 	// === InfluxDB ===
-	mux.HandleFunc("/write", s.handleInfluxDB)                      // InfluxDB v1
-	mux.HandleFunc("/api/v2/write", s.handleInfluxDB)               // InfluxDB v2
-	mux.HandleFunc("/influx/write", s.handleInfluxDB)               // InfluxDB (prefixed)
+	mux.HandleFunc("/write", s.handleInfluxDB)        // InfluxDB v1
+	mux.HandleFunc("/api/v2/write", s.handleInfluxDB) // InfluxDB v2
+	mux.HandleFunc("/influx/write", s.handleInfluxDB) // InfluxDB (prefixed)
 
 	// === Graphite ===
-	mux.HandleFunc("/graphite/metrics", s.handleGraphite)           // Graphite metrics
-	mux.HandleFunc("/events/", s.handleGraphite)                    // Graphite events
+	mux.HandleFunc("/graphite/metrics", s.handleGraphite) // Graphite metrics
+	mux.HandleFunc("/events/", s.handleGraphite)          // Graphite events
 
 	// === StatsD (HTTP) ===
-	mux.HandleFunc("/statsd", s.handleStatsD)                       // StatsD over HTTP
-	mux.HandleFunc("/telegraf/statsd", s.handleStatsD)              // StatsD via Telegraf
+	mux.HandleFunc("/statsd", s.handleStatsD)          // StatsD over HTTP
+	mux.HandleFunc("/telegraf/statsd", s.handleStatsD) // StatsD via Telegraf
 
 	// === Fluent Bit / Fluentd ===
-	mux.HandleFunc("/fluent", s.handleFluentd)                      // Fluent forward
-	mux.HandleFunc("/fluentd", s.handleFluentd)                     // Fluentd
-	mux.HandleFunc("/td-agent", s.handleFluentd)                    // td-agent (Fluentd)
+	mux.HandleFunc("/fluent", s.handleFluentd)   // Fluent forward
+	mux.HandleFunc("/fluentd", s.handleFluentd)  // Fluentd
+	mux.HandleFunc("/td-agent", s.handleFluentd) // td-agent (Fluentd)
 
 	// === Syslog ===
-	mux.HandleFunc("/syslog", s.handleSyslog)                       // Syslog over HTTP
+	mux.HandleFunc("/syslog", s.handleSyslog) // Syslog over HTTP
 
 	// === New Relic ===
-	mux.HandleFunc("/log/v1", s.handleNewRelicLogs)                 // New Relic logs
-	mux.HandleFunc("/metric/v1", s.handleNewRelicMetrics)           // New Relic metrics
-	mux.HandleFunc("/trace/v1", s.handleNewRelicTraces)             // New Relic traces
+	mux.HandleFunc("/log/v1", s.handleNewRelicLogs)       // New Relic logs
+	mux.HandleFunc("/metric/v1", s.handleNewRelicMetrics) // New Relic metrics
+	mux.HandleFunc("/trace/v1", s.handleNewRelicTraces)   // New Relic traces
 
 	// === Honeycomb ===
-	mux.HandleFunc("/1/events/", s.handleHoneycomb)                 // Honeycomb events
-	mux.HandleFunc("/1/batch/", s.handleHoneycomb)                  // Honeycomb batch
+	mux.HandleFunc("/1/events/", s.handleHoneycomb) // Honeycomb events
+	mux.HandleFunc("/1/batch/", s.handleHoneycomb)  // Honeycomb batch
 
 	// === AWS ===
-	mux.HandleFunc("/xray", s.handleAWSXRay)                        // AWS X-Ray
-	mux.HandleFunc("/cloudwatch", s.handleCloudWatch)               // CloudWatch metrics
-	mux.HandleFunc("/firehose", s.handleCloudWatch)                 // Kinesis Firehose
+	mux.HandleFunc("/xray", s.handleAWSXRay)          // AWS X-Ray
+	mux.HandleFunc("/cloudwatch", s.handleCloudWatch) // CloudWatch metrics
+	mux.HandleFunc("/firehose", s.handleCloudWatch)   // Kinesis Firehose
 
 	// === Google Cloud ===
-	mux.HandleFunc("/v2/traces", s.handleGoogleCloudTrace)          // Google Cloud Trace
-	mux.HandleFunc("/google/logging", s.handleGoogleCloudLogging)   // Google Cloud Logging
+	mux.HandleFunc("/v2/traces", s.handleGoogleCloudTrace)        // Google Cloud Trace
+	mux.HandleFunc("/google/logging", s.handleGoogleCloudLogging) // Google Cloud Logging
 
 	// === Azure ===
-	mux.HandleFunc("/azure/metrics", s.handleAzureMonitor)          // Azure Monitor
-	mux.HandleFunc("/azure/logs", s.handleAzureMonitor)             // Azure Logs
+	mux.HandleFunc("/azure/metrics", s.handleAzureMonitor) // Azure Monitor
+	mux.HandleFunc("/azure/logs", s.handleAzureMonitor)    // Azure Logs
 
 	// === Dynatrace ===
-	mux.HandleFunc("/api/v2/metrics/ingest", s.handleDynatrace)     // Dynatrace metrics
-	mux.HandleFunc("/api/v2/logs/ingest", s.handleDynatrace)        // Dynatrace logs
+	mux.HandleFunc("/api/v2/metrics/ingest", s.handleDynatrace) // Dynatrace metrics
+	mux.HandleFunc("/api/v2/logs/ingest", s.handleDynatrace)    // Dynatrace logs
 
 	// === AppDynamics ===
-	mux.HandleFunc("/appdynamics/events", s.handleAppDynamics)      // AppDynamics
+	mux.HandleFunc("/appdynamics/events", s.handleAppDynamics) // AppDynamics
 
 	// === SignalFx/Splunk Observability ===
-	mux.HandleFunc("/v2/datapoint", s.handleSignalFx)               // SignalFx metrics
-	mux.HandleFunc("/v2/event", s.handleSignalFx)                   // SignalFx events
+	mux.HandleFunc("/v2/datapoint", s.handleSignalFx) // SignalFx metrics
+	mux.HandleFunc("/v2/event", s.handleSignalFx)     // SignalFx events
 
 	// === Logstash ===
-	mux.HandleFunc("/logstash", s.handleLogstash)                   // Logstash HTTP input
+	mux.HandleFunc("/logstash", s.handleLogstash) // Logstash HTTP input
 
 	// === Sumo Logic ===
-	mux.HandleFunc("/receiver/v1/http", s.handleSumoLogic)          // Sumo Logic HTTP
+	mux.HandleFunc("/receiver/v1/http", s.handleSumoLogic) // Sumo Logic HTTP
 
 	s.server = &http.Server{
 		Addr:    fmt.Sprintf(":%d", s.port),
@@ -831,7 +831,7 @@ func (s *Server) ingestOTLP(body []byte, w http.ResponseWriter) {
 					ParentSpanID: span.ParentSpanID,
 					Service:      service,
 					Operation:    span.Name,
-					StartTime:    time.Now(), // Simplified
+					StartTime:    time.Now(),             // Simplified
 					Duration:     time.Millisecond * 100, // Simplified
 					Status:       span.Status.Code,
 				}
@@ -947,8 +947,8 @@ func (s *Server) ingestJaeger(body []byte, w http.ResponseWriter) {
 	// Jaeger JSON format (simplified)
 	var payload struct {
 		Data []struct {
-			TraceID   string `json:"traceID"`
-			Spans     []struct {
+			TraceID string `json:"traceID"`
+			Spans   []struct {
 				TraceID       string `json:"traceID"`
 				SpanID        string `json:"spanID"`
 				OperationName string `json:"operationName"`
@@ -2031,10 +2031,10 @@ func (s *Server) handleGoogleCloudLogging(w http.ResponseWriter, r *http.Request
 func (s *Server) ingestGoogleCloudLogging(body []byte, w http.ResponseWriter) {
 	var payload struct {
 		Entries []struct {
-			LogName   string `json:"logName"`
-			Severity  string `json:"severity"`
-			Timestamp string `json:"timestamp"`
-			TextPayload string `json:"textPayload"`
+			LogName     string                 `json:"logName"`
+			Severity    string                 `json:"severity"`
+			Timestamp   string                 `json:"timestamp"`
+			TextPayload string                 `json:"textPayload"`
 			JSONPayload map[string]interface{} `json:"jsonPayload"`
 		} `json:"entries"`
 	}

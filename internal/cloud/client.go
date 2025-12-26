@@ -37,8 +37,8 @@ type Summary struct {
 // RemediationCommand is received from cloud after human approval
 type RemediationCommand struct {
 	ID       string `json:"id"`
-	Type     string `json:"type"`     // scale, restart, circuit_breaker
-	Target   string `json:"target"`   // service name
+	Type     string `json:"type"`   // scale, restart, circuit_breaker
+	Target   string `json:"target"` // service name
 	Title    string `json:"title"`
 	Replicas int    `json:"replicas,omitempty"`
 	Command  string `json:"command,omitempty"`
@@ -164,10 +164,10 @@ func (c *Client) connectAndListen(ctx context.Context, handler func(RemediationC
 			}
 
 			var msg struct {
-				Type          string             `json:"type"`
-				Command       RemediationCommand `json:"command,omitempty"`
-				InvestigationID string           `json:"investigationId,omitempty"`
-				Actions       []RemediationCommand `json:"actions,omitempty"`
+				Type            string               `json:"type"`
+				Command         RemediationCommand   `json:"command,omitempty"`
+				InvestigationID string               `json:"investigationId,omitempty"`
+				Actions         []RemediationCommand `json:"actions,omitempty"`
 			}
 
 			if err := json.Unmarshal(message, &msg); err != nil {
@@ -210,8 +210,8 @@ func (c *Client) ReportCommandResult(commandID, status, error string) error {
 
 // EnrichedContextPayload is sent to cloud for LLM-based command generation
 type EnrichedContextPayload struct {
-	LicenseKey      string                    `json:"licenseKey"`
-	EnrichedContext *ctxpkg.EnrichedContext   `json:"enrichedContext"`
+	LicenseKey      string                  `json:"licenseKey"`
+	EnrichedContext *ctxpkg.EnrichedContext `json:"enrichedContext"`
 }
 
 // SendEnrichedContext sends enriched anomaly context to cloud for LLM analysis

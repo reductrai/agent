@@ -10,9 +10,9 @@ import (
 
 // Thresholds for anomaly detection
 const (
-	ErrorRateThreshold    = 0.05  // 5% error rate
-	LatencyP99Threshold   = 1000  // 1000ms p99
-	TrafficDropThreshold  = 0.5   // 50% traffic drop
+	ErrorRateThreshold   = 0.05 // 5% error rate
+	LatencyP99Threshold  = 1000 // 1000ms p99
+	TrafficDropThreshold = 0.5  // 50% traffic drop
 )
 
 // AnomalyDetector detects anomalies from telemetry data

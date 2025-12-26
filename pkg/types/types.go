@@ -35,21 +35,21 @@ type Span struct {
 
 // ServiceHealth represents aggregated health for a service
 type ServiceHealth struct {
-	Service       string   `json:"service"`
-	ErrorRate     float64  `json:"error_rate"`
-	LatencyP50Ms  float64  `json:"latency_p50_ms"`
-	LatencyP99Ms  float64  `json:"latency_p99_ms"`
-	RequestsPerMin float64 `json:"requests_per_min"`
-	TopErrors     []string `json:"top_errors,omitempty"`
-	Dependencies  []string `json:"dependencies,omitempty"`
+	Service        string   `json:"service"`
+	ErrorRate      float64  `json:"error_rate"`
+	LatencyP50Ms   float64  `json:"latency_p50_ms"`
+	LatencyP99Ms   float64  `json:"latency_p99_ms"`
+	RequestsPerMin float64  `json:"requests_per_min"`
+	TopErrors      []string `json:"top_errors,omitempty"`
+	Dependencies   []string `json:"dependencies,omitempty"`
 }
 
 // Anomaly represents a detected anomaly
 type Anomaly struct {
-	Service   string  `json:"service"`
-	Type      string  `json:"type"` // error_spike, latency_spike, traffic_drop
-	Severity  string  `json:"severity"` // low, medium, high, critical
-	Value     float64 `json:"value"`
-	Threshold float64 `json:"threshold"`
+	Service    string    `json:"service"`
+	Type       string    `json:"type"`     // error_spike, latency_spike, traffic_drop
+	Severity   string    `json:"severity"` // low, medium, high, critical
+	Value      float64   `json:"value"`
+	Threshold  float64   `json:"threshold"`
 	DetectedAt time.Time `json:"detected_at"`
 }

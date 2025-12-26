@@ -89,21 +89,21 @@ type ServiceCorrelation struct {
 
 // RedactedLog is a log entry with PII removed
 type RedactedLog struct {
-	Timestamp   int64  `json:"timestamp"`             // Unix timestamp
-	Level       string `json:"level"`                 // ERROR, WARN, etc.
-	MessageHash string `json:"messageHash"`           // For deduplication
-	Template    string `json:"template"`              // Redacted message template
-	Count       int    `json:"count,omitempty"`       // If grouped by template
-	ErrorType   string `json:"errorType,omitempty"`   // Extracted error type
+	Timestamp   int64  `json:"timestamp"`           // Unix timestamp
+	Level       string `json:"level"`               // ERROR, WARN, etc.
+	MessageHash string `json:"messageHash"`         // For deduplication
+	Template    string `json:"template"`            // Redacted message template
+	Count       int    `json:"count,omitempty"`     // If grouped by template
+	ErrorType   string `json:"errorType,omitempty"` // Extracted error type
 }
 
 // RedactedSpan is a span with PII removed
 type RedactedSpan struct {
-	Operation  string  `json:"operation"`            // e.g., GET /users/[ID]
-	DurationMs float64 `json:"durationMs"`           // Duration in milliseconds
-	Status     string  `json:"status"`               // OK or ERROR
-	ErrorType  string  `json:"errorType,omitempty"`  // Type of error if status=ERROR
-	Count      int     `json:"count,omitempty"`      // If grouped
+	Operation  string  `json:"operation"`           // e.g., GET /users/[ID]
+	DurationMs float64 `json:"durationMs"`          // Duration in milliseconds
+	Status     string  `json:"status"`              // OK or ERROR
+	ErrorType  string  `json:"errorType,omitempty"` // Type of error if status=ERROR
+	Count      int     `json:"count,omitempty"`     // If grouped
 }
 
 // EndpointStats contains aggregated stats for an endpoint

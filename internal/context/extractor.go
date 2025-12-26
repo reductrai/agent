@@ -169,7 +169,7 @@ func (e *Extractor) extractServiceMetrics(service string, since time.Time) Servi
 	var latencyP99 float64
 	if err := row.Scan(&total, &errors, &latencyP99); err == nil && total > 0 {
 		metrics.ErrorRate = float64(errors) / float64(total)
-		metrics.LatencyP99 = latencyP99 / 1000 // us to ms
+		metrics.LatencyP99 = latencyP99 / 1000  // us to ms
 		metrics.Throughput = float64(total) / 5 // per minute
 	}
 
