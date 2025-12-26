@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"syscall"
 	"time"
 
@@ -363,10 +364,19 @@ func queryCmd() *cobra.Command {
 }
 
 func schemaCmd() *cobra.Command {
-	return &cobra.Command{
+	var dynamic bool
+
+	cmd := &cobra.Command{
 		Use:   "schema",
 		Short: "Show database schema and example queries",
 		Run: func(cmd *cobra.Command, args []string) {
+			if dynamic {
+				// Show dynamic schema from actual database
+				showDynamicSchema()
+				return
+			}
+
+			// Show static schema documentation
 			fmt.Println(`
 ╔═══════════════════════════════════════════════════════════╗
 ║                  ReductrAI Database Schema                ║
@@ -430,7 +440,53 @@ reductrai query "SELECT 'spans' as table_name, tier, COUNT(*) as rows FROM spans
 # Latency percentiles by service
 reductrai query "SELECT service, PERCENTILE_CONT(0.50) WITHIN GROUP (ORDER BY duration_us)/1000 as p50_ms, PERCENTILE_CONT(0.95) WITHIN GROUP (ORDER BY duration_us)/1000 as p95_ms, PERCENTILE_CONT(0.99) WITHIN GROUP (ORDER BY duration_us)/1000 as p99_ms FROM spans GROUP BY service"
 
-NOTE: All queries are FREE and unlimited. Only AI investigations count toward your plan.`)
+NOTE: All queries are FREE and unlimited. Only AI investigations count toward your plan.
+
+TIP: Use 'reductrai schema --dynamic' to see the actual schema from your database.`)
 		},
 	}
+
+	cmd.Flags().BoolVarP(&dynamic, "dynamic", "d", false, "Show actual schema from database (includes row counts)")
+	return cmd
+}
+
+// showDynamicSchema displays the schema dynamically from the database
+func showDynamicSchema() {
+	dataDir := os.Getenv("REDUCTRAI_DATA_DIR")
+	if dataDir == "" {
+		dataDir = filepath.Join(os.Getenv("HOME"), ".reductrai")
+	}
+
+	db, err := storage.NewDuckDB(dataDir)
+	if err != nil {
+		fmt.Printf("Error connecting to database: %v\n", err)
+		return
+	}
+	defer db.Close()
+
+	fmt.Println(`
+╔═══════════════════════════════════════════════════════════╗
+║            ReductrAI Dynamic Database Schema              ║
+╚═══════════════════════════════════════════════════════════╝`)
+
+	// Get dynamic schema context
+	schemaContext, err := db.GetDynamicSchemaContext()
+	if err != nil {
+		fmt.Printf("Error getting schema: %v\n", err)
+		return
+	}
+
+	fmt.Println(schemaContext)
+
+	// Also show data introspection for common queries
+	fmt.Println("\n## ACTUAL DATA VALUES (sample from your database):")
+
+	introspection, _ := db.IntrospectDataValues("service status level operation")
+	for key, values := range introspection {
+		if len(values) > 0 {
+			fmt.Printf("**%s**: %s\n", key, strings.Join(values, ", "))
+		}
+	}
+
+	fmt.Println("\nNOTE: This is the ACTUAL schema from your database. Use this for accurate queries.")
 }

@@ -870,7 +870,18 @@ func (d *DuckDB) GetServiceDependencies(service string) []string {
 }
 
 // Query runs a raw SQL query (for CLI)
+// Auto-fixes common LLM column name hallucinations before executing
 func (d *DuckDB) Query(sql string) (*sql.Rows, error) {
+	// Auto-fix common column name mistakes
+	fixedSQL := d.FixColumnNames(sql)
+
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	return d.db.Query(fixedSQL)
+}
+
+// QueryRaw runs a raw SQL query without auto-fixing (for internal use)
+func (d *DuckDB) QueryRaw(sql string) (*sql.Rows, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 	return d.db.Query(sql)
