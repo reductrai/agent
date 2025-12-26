@@ -1,0 +1,145 @@
+Server Side Public License (SSPL)
+Version 1, October 16, 2018
+
+Copyright (c) 2024-2025 ReductrAI. All rights reserved.
+
+TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+
+0. Definitions.
+
+"This License" refers to Server Side Public License.
+
+"The Program" refers to any copyrightable work licensed under this License.
+
+"You" (or "Your") shall mean an individual or Legal Entity exercising
+permissions granted by this License.
+
+"Source form" shall mean the preferred form for making modifications,
+including but not limited to software source code, documentation source,
+and configuration files.
+
+"Object form" shall mean any form resulting from mechanical transformation
+or translation of a Source form.
+
+"Work" shall mean the work of authorship, whether in Source or Object
+form, made available under the License.
+
+"Derivative Works" shall mean any work, whether in Source or Object form,
+that is based on (or derived from) the Work.
+
+"Contribution" shall mean any work of authorship submitted for inclusion
+in the Work.
+
+"Licensor" shall mean ReductrAI or a Legal Entity authorized to grant
+this License.
+
+1. Grant of Copyright License.
+
+Subject to the terms and conditions of this License, the Licensor hereby
+grants to You a perpetual, worldwide, non-exclusive, no-charge, royalty-free,
+irrevocable copyright license to reproduce, prepare Derivative Works of,
+publicly display, publicly perform, sublicense, and distribute the Work
+and such Derivative Works in Source or Object form.
+
+2. Grant of Patent License.
+
+Subject to the terms and conditions of this License, the Licensor hereby
+grants to You a perpetual, worldwide, non-exclusive, no-charge, royalty-free,
+irrevocable patent license to make, have made, use, offer to sell, sell,
+import, and otherwise transfer the Work.
+
+3. Offering the Program as a Service.
+
+If you make the functionality of the Program or a modified version available
+to third parties as a service, you must make the Service Source Code available
+via network download to everyone at no charge, under the terms of this License.
+
+"Service Source Code" means the source code for all programs that you use
+to make the Program or modified version available as a service, including:
+
+(a) management software, user interfaces, application program interfaces,
+    automation software, monitoring software, backup software, storage
+    software and hosting software, all such that a user could run an
+    instance of the service using the Service Source Code you make available.
+
+4. No Trademark License.
+
+This License does not grant permission to use the trade names, trademarks,
+service marks, or product names of the Licensor.
+
+5. Disclaimer of Warranty.
+
+THE WORK IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE WORK OR THE USE OR OTHER DEALINGS
+IN THE WORK.
+
+6. Limitation of Liability.
+
+IN NO EVENT SHALL THE LICENSOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY.
+
+7. Accepting Warranty or Additional Liability.
+
+While redistributing the Work or Derivative Works thereof, You may choose
+to offer, and charge a fee for, acceptance of support, warranty, indemnity,
+or other liability obligations and/or rights consistent with this License.
+
+8. Version of this License.
+
+This is version 1 of the Server Side Public License.
+
+---
+
+ADDITIONAL TERMS FOR REDUCTRAI
+
+The following additional terms apply to ReductrAI:
+
+A. OPEN CORE MODEL
+
+This License applies to the ReductrAI Agent (the "Open Source Component"):
+- apps/binary/ (Go binary agent)
+- Command-line interface
+- Telemetry ingestion
+- Local storage (DuckDB)
+- Anomaly detection
+- Compression algorithms
+
+The following components are NOT covered by this License and remain
+proprietary to ReductrAI:
+- Cloud Dashboard (app.reductrai.com)
+- AI Relay Service
+- Managed LLM infrastructure
+- Commercial support
+
+B. LOCAL-ONLY MODE
+
+You may run the Open Source Component in local-only mode without a license:
+- Full telemetry ingestion and storage
+- Local anomaly detection
+- Integration with your own LLM (Ollama, vLLM, OpenAI, etc.)
+- No data sent to ReductrAI cloud
+
+For cloud features (Dashboard, AI Relay), a commercial license is required.
+
+C. CONTRIBUTION GUIDELINES
+
+Contributions to the Open Source Component are welcome under the terms of
+this License. By contributing, you agree to license your contributions
+under the same terms.
+
+---
+
+CONTACT
+
+For commercial licensing inquiries:
+Email: legal@reductrai.com
+Website: https://reductrai.com
+
+ReductrAI
+"Your data stays local. Code is auditable. AI comes to you."

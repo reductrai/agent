@@ -1,0 +1,130 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version (e.g., 0.1.0)'
+        required: true
+        default: '0.1.0'
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build ${{ matrix.os }} ${{ matrix.arch }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: linux
+            arch: amd64
+            runner: ubuntu-latest
+            binary: reductrai-linux-amd64
+
+          - os: darwin
+            arch: universal
+            runner: macos-14
+            binary: reductrai-darwin
+
+          - os: windows
+            arch: amd64
+            runner: windows-latest
+            binary: reductrai-windows-amd64.exe
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24.x'
+
+      - name: Set version
+        id: version
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then
+            VERSION="${GITHUB_REF#refs/tags/v}"
+          else
+            VERSION="${{ github.event.inputs.version }}"
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Build (Linux)
+        if: matrix.os == 'linux'
+        run: |
+          mkdir -p dist
+          go build -ldflags="-s -w -X main.version=${{ steps.version.outputs.version }}" \
+            -o dist/${{ matrix.binary }} ./cmd/reductrai
+
+      - name: Build (macOS)
+        if: matrix.os == 'darwin'
+        run: |
+          mkdir -p dist
+          # Build ARM64 (native)
+          go build -ldflags="-s -w -X main.version=${{ steps.version.outputs.version }}" \
+            -o dist/reductrai-darwin-arm64 ./cmd/reductrai
+          # Build AMD64 (cross-compile)
+          CGO_ENABLED=1 GOARCH=amd64 CC="clang -arch x86_64" \
+            go build -ldflags="-s -w -X main.version=${{ steps.version.outputs.version }}" \
+            -o dist/reductrai-darwin-amd64 ./cmd/reductrai
+
+      - name: Build (Windows)
+        if: matrix.os == 'windows'
+        shell: bash
+        env:
+          CGO_ENABLED: 1
+        run: |
+          mkdir -p dist
+          go build -ldflags="-s -w -X main.version=${{ steps.version.outputs.version }}" \
+            -o dist/${{ matrix.binary }} ./cmd/reductrai
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.binary }}
+          path: dist/*
+
+  release:
+    name: Create Release
+    needs: [build]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Prepare release files
+        run: |
+          mkdir -p release
+          find artifacts -type f -name "reductrai-*" -exec mv {} release/ \;
+          chmod +x release/reductrai-* 2>/dev/null || true
+          ls -la release/
+
+      - name: Generate checksums
+        working-directory: release
+        run: |
+          sha256sum * > checksums.txt
+          cat checksums.txt
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: release/*
+          generate_release_notes: true
+          draft: false
+          prerelease: ${{ contains(github.ref, 'alpha') || contains(github.ref, 'beta') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

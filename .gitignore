@@ -1,0 +1,27 @@
+# Binaries
+dist/
+/reductrai
+*.exe
+
+# Data
+*.duckdb
+*.duckdb.wal
+data/
+.reductrai/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test
+coverage.out
+*.test
+
+# Vendor (we use go modules)
+vendor/
