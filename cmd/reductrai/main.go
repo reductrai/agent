@@ -430,8 +430,7 @@ reductrai query "SELECT 'spans' as table_name, tier, COUNT(*) as rows FROM spans
 # Latency percentiles by service
 reductrai query "SELECT service, PERCENTILE_CONT(0.50) WITHIN GROUP (ORDER BY duration_us)/1000 as p50_ms, PERCENTILE_CONT(0.95) WITHIN GROUP (ORDER BY duration_us)/1000 as p95_ms, PERCENTILE_CONT(0.99) WITHIN GROUP (ORDER BY duration_us)/1000 as p99_ms FROM spans GROUP BY service"
 
-NOTE: All queries are FREE and unlimited. Only AI investigations count toward your plan.
-`)
+NOTE: All queries are FREE and unlimited. Only AI investigations count toward your plan.`)
 		},
 	}
 }
